@@ -3,6 +3,7 @@ import { ref } from "vue"
 import PersonalInfoForm from '../components/register/PersonalInfoForm.vue';
 import PasswordForm from '../components/register/PasswordForm.vue';
 import ProfilePictureForm from '../components/register/ProfilePictureForm.vue';
+import ProjectForm from '../components/register/ProjectForm.vue';
 
 const currentStep = ref(0)
 const steps = [
@@ -20,7 +21,7 @@ const steps = [
 	},
 	{
 		text: "Your First Project",
-		component: null
+		component: ProjectForm 
 	}
 ];
 
