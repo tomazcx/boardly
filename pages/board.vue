@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
+definePageMeta({
+	layout: "dashboard"
+})
+
 const currentDraggingCard = ref<{ el: HTMLElement, prevTarget: string } | null>(null)
 const states = ref<{ [key: string]: { id: string; title: string; cards: string[]; } }>({
 	new: {
@@ -61,25 +65,26 @@ const dropCard = (event: any) => {
 		states.value[currentDraggingCard.value?.prevTarget!].cards.splice(cardIndex, 1);
 	}
 }
+
+const addTask = (data: { columnId: string; task: string }) => {
+	const cardIndex = states.value[data.columnId]?.cards.indexOf(data.task);
+	const taskId = (Math.random() * 10000).toFixed(0);
+	const taskLabel = taskId.toString() + " - " + data.task;
+	if (cardIndex === -1) {
+		states.value[data.columnId].cards.push(taskLabel)
+	}
+}
 </script>
 
 <template>
-	<div>
-		<LayoutHeader />
-		<main class="grid grid-cols-12">
-			<LayoutAside />
-			<section class="col-span-10  p-4">
-				<h2 class="text-2xl mb-4">Board</h2>
-				<div class="flex gap-4 h-[80vh] overflow-auto">
-					<BoardStateColumn v-for="state in arrStates" :column-id="state.id" v-slot="scope" @update:drop-card="dropCard"
-						:title="state.title" :cards="state.cards">
-						<BoardTaskCard :current-state="state.title" :label="scope.card"
-							:key="'card-' + state.id + '-' + scope.card" @dragstart="startDragCard"
-							@dragend="endDragCard" />
-					</BoardStateColumn>
-				</div>
-			</section>
-		</main>
+	<h2 class="text-2xl mb-4">Board</h2>
+	<div class="flex gap-4 h-[80vh] overflow-auto">
+		<BoardStateColumn @update:add-task="addTask" v-for="state in arrStates" :column-id="state.id" v-slot="scope"
+			@update:drop-card="dropCard" :title="state.title" :cards="state.cards">
+			<BoardTaskCard :current-state="state.title" :label="scope.card"
+				:key="'card-' + state.id + '-' + scope.card" @dragstart="startDragCard"
+				@dragend="endDragCard" />
+		</BoardStateColumn>
 	</div>
 </template>
 
